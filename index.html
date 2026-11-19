@@ -16,7 +16,7 @@
 <main class="wrap main"><div class="resultshead"><h3 id="count">الأماكن المتاحة</h3><span class="hint" id="storageHint">يتم تحميل بيانات الدليل من قاعدة البيانات</span></div><div class="grid" id="grid"></div><div class="empty" id="empty"><div class="emoji">🧭</div><h3>ملقيناش مكان بالمواصفات دي</h3><p>جرّب كلمة بحث مختلفة أو امسح البحث لعرض كل الأماكن.</p><button class="btn btn-primary" onclick="clearSearch()">عرض الكل</button></div></main>
 <footer class="footer"><strong>دليل الكلية الذكي 🎓</strong><br>كلية التربية النوعية – جامعة المنوفية – أشمون<br><span>المعلومات الإرشادية يضيفها ويحدّثها مشرف الدليل.</span></footer>
 
-<div class="overlay" id="loginModal"><section class="modal loginwrap"><div class="modalhead"><h3>دخول المشرف</h3><button class="xbtn" onclick="closeModal('loginModal')">×</button></div><div class="modalcontent"><div class="notice">استخدم حساب المشرف المعتمد. لأول مرة، أنشئ الحساب من هنا ببريدك المعتمد، ثم أكّد البريد الإلكتروني قبل تسجيل الدخول.</div><form id="loginForm"><div class="field"><label>البريد الإلكتروني</label><input id="adminEmail" type="email" autocomplete="username" required placeholder="البريد الإلكتروني المعتمد"></div><div class="field" style="margin-top:12px"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" required placeholder="كلمة مرور الحساب"></div><p id="loginError" class="hidden" style="color:#c43c4b;font-weight:800"></p><button class="btn btn-primary" style="width:100%;margin-top:15px" type="submit">دخول لوحة الإدارة</button><button class="btn btn-soft" style="width:100%;margin-top:8px" type="button" onclick="signupFirstAdmin()">إنشاء حساب المشرف لأول مرة</button><button class="btn btn-soft" style="width:100%;margin-top:8px" type="button" onclick="sendPasswordReset()">نسيت كلمة المرور؟</button></form></div></section></div>
+<div class="overlay" id="loginModal"><section class="modal loginwrap"><div class="modalhead"><h3>دخول المشرف</h3><button class="xbtn" onclick="closeModal('loginModal')">×</button></div><div class="modalcontent"><div class="notice">اسم المستخدم للمشرف هو <b>admin</b>. أول مرة اضغط «إنشاء حساب المشرف» مرة واحدة، وبعدها استخدم اسم المستخدم وكلمة المرور للدخول. لا تحتاج إلى بريد إلكتروني.</div><form id="loginForm"><div class="field"><label>اسم المستخدم</label><input id="adminUsername" type="text" autocomplete="username" required maxlength="24" placeholder="admin" value="admin"></div><div class="field" style="margin-top:12px"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" required minlength="12" placeholder="كلمة مرور المشرف"></div><p id="loginError" class="hidden" style="color:#c43c4b;font-weight:800"></p><button class="btn btn-primary" style="width:100%;margin-top:15px" type="submit">دخول لوحة الإدارة</button><button class="btn btn-soft" style="width:100%;margin-top:8px" type="button" onclick="signupFirstAdmin()">إنشاء حساب المشرف لأول مرة</button></form></div></section></div>
 
 <div class="overlay" id="formModal"><section class="modal"><div class="modalhead"><h3 id="formTitle">إضافة مكان جديد</h3><button class="xbtn" onclick="closeModal('formModal')">×</button></div><form id="placeForm"><div class="modalcontent"><div class="notice">أدخل بيانات مؤكدة من الكلية. أي مكان جديد سيظهر بعلامة «يحتاج مراجعة» حتى تلغيها بعد التحقق.</div><div class="fieldgrid"><div class="field"><label>اسم المكان *</label><input name="name" required placeholder="مثال: مدرج أ"></div><div class="field"><label>نوع المكان *</label><select name="type" required><option value="مدرج">مدرج</option><option value="معمل">معمل</option><option value="قاعة دراسية">قاعة دراسية</option><option value="إداري">إداري / خدمات</option></select></div><div class="field"><label>المبنى</label><input name="building" placeholder="اسم أو رقم المبنى"></div><div class="field"><label>الدور</label><input name="floor" placeholder="مثال: الأرضي / الأول"></div><div class="field full"><label>أقرب علامة مميزة</label><input name="landmark" placeholder="مثال: بجوار السلم الرئيسي"></div><div class="field full"><label>وصف الطريق خطوة بخطوة</label><textarea name="directions" maxlength="3000" placeholder="اكتب خطوات الوصول بشكل واضح..."></textarea></div><div class="field full"><label>ملاحظات إضافية</label><textarea name="notes" maxlength="2000" placeholder="مواعيد، تعليمات أو تفاصيل إضافية..."></textarea></div><div class="field full"><label>رابط صورة المكان (اختياري)</label><input name="image" type="url" placeholder="https://..."></div><div class="field full"><label>أو ارفع صورة من جهازك</label><input name="imageFile" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif"></div><div class="field"><label>حالة البيانات</label><select name="verified"><option value="false">تحتاج مراجعة</option><option value="true">تم التحقق منها</option></select></div></div></div><div class="modalfoot"><button class="btn btn-primary" type="submit">حفظ البيانات</button><button class="btn btn-soft" type="button" onclick="closeModal('formModal')">إلغاء</button></div></form></section></div>
 
@@ -84,49 +84,60 @@ async function adminButton(){
   if(!isConfigured){toast('يجب إعداد مشروع Supabase مستقل أولًا لتفعيل إدارة الدليل');return;}
   document.getElementById('loginError').textContent='';document.getElementById('loginError').classList.add('hidden');document.getElementById('loginForm').reset();openModal('loginModal');
 }
+const COLLEGE_ADMIN_USERNAME = 'admin';
+const COLLEGE_ADMIN_EMAIL_ALIAS = 'admin@college-guide.example';
+function adminLoginEmail(username){
+  const value=String(username||'').trim().toLowerCase();
+  return value===COLLEGE_ADMIN_USERNAME ? COLLEGE_ADMIN_EMAIL_ALIAS : '';
+}
 async function signupFirstAdmin(){
   if(!db)return;
-  const email=document.getElementById('adminEmail').value.trim();
+  const username=document.getElementById('adminUsername').value.trim().toLowerCase();
   const password=document.getElementById('password').value;
   const err=document.getElementById('loginError');
   err.textContent='';err.classList.add('hidden');
-  if(!email){err.textContent='اكتب البريد الإلكتروني المعتمد أولًا.';err.classList.remove('hidden');return;}
-  if(password.length<10){err.textContent='أنشئ كلمة مرور لا تقل عن 10 أحرف.';err.classList.remove('hidden');return;}
-  const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
-  if(error){err.textContent='تعذر إنشاء الحساب. قد يكون البريد مسجلًا بالفعل؛ جرّب تسجيل الدخول.';err.classList.remove('hidden');return;}
-  if(!data.session){
-    err.textContent='تم بدء التسجيل. افتح رسالة تأكيد البريد الإلكتروني، ثم ارجع وسجّل الدخول بنفس البيانات.';
+  if(username!==COLLEGE_ADMIN_USERNAME){err.textContent='اسم المستخدم الصحيح هو admin.';err.classList.remove('hidden');return;}
+  if(password.length<12){err.textContent='استخدم كلمة مرور لا تقل عن 12 حرفًا.';err.classList.remove('hidden');return;}
+  const {data:signupData,error:signupError}=await db.auth.signUp({
+    email:COLLEGE_ADMIN_EMAIL_ALIAS,
+    password,
+    options:{data:{username:COLLEGE_ADMIN_USERNAME}}
+  });
+  // If this account was already created, a normal sign-in below is still valid.
+  if(signupError && !/already registered|already been registered|user exists/i.test(signupError.message||'')){
+    err.textContent='تعذر إنشاء حساب المشرف. حاول مرة أخرى أو استخدم تسجيل الدخول إذا كان الحساب موجودًا.';
     err.classList.remove('hidden');return;
   }
-  const {data:refreshed,error:refreshError}=await db.auth.refreshSession();
-  if(refreshError||refreshed?.session?.user?.app_metadata?.role!=='admin'){
+  const {data,error}=await db.auth.signInWithPassword({email:COLLEGE_ADMIN_EMAIL_ALIAS,password});
+  if(error){
+    err.textContent='لم ينجح إنشاء الحساب أو تسجيل الدخول. تأكد من كلمة المرور وحاول مرة أخرى.';
+    err.classList.remove('hidden');return;
+  }
+  if(data.user?.app_metadata?.role!=='admin'){
     await db.auth.signOut();
-    err.textContent='لم يتم تفعيل حساب المشرف. تأكد من استخدام البريد المعتمد لأول مشرف ومن تأكيد البريد.';
+    err.textContent='الحساب لم يحصل على صلاحية المشرف. تواصل مع مسؤول النظام.';
     err.classList.remove('hidden');return;
   }
-  setAdmin(true,email);closeModal('loginModal');await loadPlaces();toast('تم إنشاء حساب المشرف وتفعيل الصلاحية');
+  setAdmin(true,username);closeModal('loginModal');await loadPlaces();
+  toast(signupData?.user?'تم إنشاء حساب المشرف وتسجيل الدخول':'تم تسجيل الدخول بنجاح');
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();if(!db)return;
-  const email=document.getElementById('adminEmail').value.trim(),password=document.getElementById('password').value,err=document.getElementById('loginError');
+  const username=document.getElementById('adminUsername').value.trim().toLowerCase();
+  const email=adminLoginEmail(username);
+  const password=document.getElementById('password').value;
+  const err=document.getElementById('loginError');
   err.textContent='';err.classList.add('hidden');
+  if(!email){err.textContent='اسم المستخدم غير صحيح.';err.classList.remove('hidden');return;}
   const {data,error}=await db.auth.signInWithPassword({email,password});
-  if(error){err.textContent='تعذر تسجيل الدخول. راجع البريد وكلمة المرور أو أكّد بريدك الإلكتروني.';err.classList.remove('hidden');return;}
+  if(error){err.textContent='اسم المستخدم أو كلمة المرور غير صحيحة.';err.classList.remove('hidden');return;}
   if(data.user?.app_metadata?.role!=='admin'){
     await db.auth.signOut();
-    err.textContent='هذا الحساب غير مخوّل ليكون مشرفًا. استخدم البريد المعتمد لأول مشرف.';
+    err.textContent='الحساب ليس لديه صلاحية المشرف.';
     err.classList.remove('hidden');return;
   }
-  setAdmin(true,data.user?.email||email);closeModal('loginModal');await loadPlaces();toast('تم تسجيل الدخول بنجاح');
+  setAdmin(true,username);closeModal('loginModal');await loadPlaces();toast('تم تسجيل الدخول بنجاح');
 });
-async function sendPasswordReset(){
-  if(!db)return;
-  const email=document.getElementById('adminEmail').value.trim();
-  if(!email){toast('اكتب البريد الإلكتروني أولًا');document.getElementById('adminEmail').focus();return;}
-  const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
-  if(error){console.error(error);toast('تعذر إرسال رابط الاستعادة. تحقق من إعدادات Auth.');return;}
-  toast('لو البريد مسجل، هيوصلك رابط لاستعادة كلمة المرور');
-}
 document.getElementById('recoveryForm').addEventListener('submit',async e=>{
   e.preventDefault();const a=document.getElementById('newPassword').value,b=document.getElementById('confirmPassword').value,err=document.getElementById('recoveryError');
   err.textContent='';err.classList.add('hidden');
