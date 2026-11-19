@@ -6,10 +6,11 @@
 ## متطلبات الإعداد
 1. تشغيل `supabase/schema.sql` على مشروع Supabase جديد ومستقل.
 2. التأكد من تفعيل Data API وأن `public` ضمن Exposed schemas.
-3. إنشاء حساب المشرف في Authentication ثم ضبط `app_metadata.role=admin` من لوحة Supabase، وليس `user_metadata`.
-4. وضع Project URL وPublishable key فقط في `config.js`. ممنوع وضع Secret أو `service_role` في المتصفح.
-5. ضبط Site URL وRedirect URLs في Auth على عنوان الموقع النهائي، وتفعيل Leaked Password Protection.
-6. إيقاف التسجيل العام بعد إنشاء حساب المشرف ما لم تكن هناك حاجة إليه.
+3. الدخول للموقع باسم المستخدم `admin`. في أول استخدام اضغط «إنشاء حساب المشرف لأول مرة» واختر كلمة مرور قوية؛ لا تحتاج إلى Gmail.
+4. الموقع يحوّل اسم المستخدم إلى المعرّف الداخلي `admin@college-guide.example` داخل Supabase Auth. هذا عنوان داخلي محجوز وليس صندوق بريد حقيقيًا.
+5. قاعدة البيانات تحتوي على قائمة سماح خاصة ومشغّل Auth؛ أول حساب للمعرّف الداخلي فقط يحصل على `app_metadata.role=admin`، والصلاحيات لا تعتمد على `user_metadata` القابل للتعديل من المستخدم.
+6. يظل Project URL وPublishable key فقط في `config.js`. ممنوع وضع Secret أو `service_role` في المتصفح.
+7. بعد إنشاء أول حساب مشرف، أوقف التسجيل العام من إعدادات Auth ما لم تكن هناك حاجة إليه.
 
 ## التشغيل المحلي
 من مجلد المشروع شغّل `python -m http.server 8000` ثم افتح `http://localhost:8000`. عند ترك الإعدادات فارغة يعمل الموقع في وضع معاينة ببيانات تجريبية للقراءة فقط.
