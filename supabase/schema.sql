@@ -75,5 +75,49 @@ do $$ begin
   alter publication supabase_realtime add table public.places;
 exception when duplicate_object then null; when undefined_object then null; end $$;
 
--- Create the admin in Supabase Auth and set app_metadata.role = admin in the dashboard.
+
+-- Username-based first administrator bootstrap.
+-- This alias is internal to Supabase Auth and does not need a real inbox.
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+
+create table if not exists private.college_admin_allowlist (
+  email text primary key check (email = lower(email)),
+  created_at timestamptz not null default pg_catalog.now()
+);
+revoke all on private.college_admin_allowlist from public, anon, authenticated;
+insert into private.college_admin_allowlist(email)
+values ('admin@college-guide.example')
+on conflict (email) do nothing;
+
+create or replace function private.assign_first_college_admin()
+returns trigger language plpgsql security definer set search_path = ''
+as $
+begin
+  if pg_catalog.lower(coalesce(new.email,'')) = 'admin@college-guide.example' then
+    new.email_confirmed_at := coalesce(new.email_confirmed_at, pg_catalog.now());
+  end if;
+  if new.email is null or new.email_confirmed_at is null then return new; end if;
+  if not exists (
+    select 1 from private.college_admin_allowlist a
+    where a.email = pg_catalog.lower(new.email)
+  ) then return new; end if;
+  if exists (
+    select 1 from auth.users u
+    where u.id <> new.id and u.raw_app_meta_data ->> 'role' = 'admin'
+  ) then return new; end if;
+  new.raw_app_meta_data := coalesce(new.raw_app_meta_data, '{}'::jsonb)
+    || pg_catalog.jsonb_build_object('role', 'admin');
+  return new;
+end;
+$;
+revoke all on function private.assign_first_college_admin() from public, anon, authenticated;
+
+drop trigger if exists assign_first_college_admin on auth.users;
+create trigger assign_first_college_admin
+before insert or update of email, email_confirmed_at on auth.users
+for each row execute function private.assign_first_college_admin();
+
+-- In the website login dialog use username "admin" and a password of your choice.
+-- The website maps that username to admin@college-guide.example behind the scenes.
 -- Confirm Data API is enabled and public is listed in Exposed schemas.
